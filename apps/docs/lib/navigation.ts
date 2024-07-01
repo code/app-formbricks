@@ -35,6 +35,7 @@ export const navigation: Array<NavGroup> = [
           { title: "Advanced Targeting", href: "/app-surveys/advanced-targeting" },
           { title: "Show Survey to % of users", href: "/global/show-survey-to-percent-of-users" }, // app and website
           { title: "Recontact Options", href: "/app-surveys/recontact" },
+          { title: "Hidden Fields", href: "/global/hidden-fields" }, // global
           { title: "Multi Language Surveys", href: "/global/multi-language-surveys" }, // global
           { title: "User Metadata", href: "/global/metadata" }, // global
           { title: "Custom Styling", href: "/global/overwrite-styling" }, // global
@@ -57,6 +58,7 @@ export const navigation: Array<NavGroup> = [
           { title: "Actions & Targeting", href: "/website-surveys/actions-and-targeting" },
           { title: "Show Survey to % of users", href: "/global/show-survey-to-percent-of-users" }, // app and website
           { title: "Recontact Options", href: "/app-surveys/recontact" },
+          { title: "Hidden Fields", href: "/global/hidden-fields" }, // global
           { title: "Multi Language Surveys", href: "/global/multi-language-surveys" }, // global
           { title: "User Metadata", href: "/global/metadata" }, // global
           { title: "Custom Styling", href: "/global/overwrite-styling" }, // global
@@ -107,6 +109,7 @@ export const navigation: Array<NavGroup> = [
     links: [
       { title: "Overview", href: "/self-hosting/overview" },
       { title: "One-Click Setup", href: "/self-hosting/one-click" },
+      { title: "Custom SSL Certificate", href: "/self-hosting/custom-ssl" },
       { title: "Docker Setup", href: "/self-hosting/docker" },
       { title: "Migration Guide", href: "/self-hosting/migration-guide" },
       { title: "Configuration", href: "/self-hosting/configuration" },
@@ -137,7 +140,15 @@ export const navigation: Array<NavGroup> = [
       { title: "SDK: Formbricks API", href: "/developer-docs/api-sdk" },
       { title: "REST API", href: "/developer-docs/rest-api" },
       { title: "Webhooks", href: "/developer-docs/webhooks" },
-      { title: "Contributing", href: "/developer-docs/contributing" },
+      {
+        title: "Contributing",
+        children: [
+          { title: "Get started", href: "/developer-docs/contributing/get-started" },
+          { title: "Codespaces", href: "/developer-docs/contributing/codespaces" },
+          { title: "Gitpod", href: "/developer-docs/contributing/gitpod" },
+          { title: "Troubleshooting", href: "/developer-docs/contributing/troubleshooting" },
+        ],
+      },
     ],
   },
 ];
