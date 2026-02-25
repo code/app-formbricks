@@ -225,6 +225,7 @@
     "failed_to_copy_to_clipboard": "Fehler beim Kopieren in die Zwischenablage",
     "failed_to_load_organizations": "Fehler beim Laden der Organisationen",
     "failed_to_load_workspaces": "Projekte konnten nicht geladen werden",
+    "filter": "Filter",
     "finish": "Fertigstellen",
     "first_name": "Vorname",
     "follow_these": "Folge diesen",

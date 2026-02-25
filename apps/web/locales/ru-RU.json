@@ -112,6 +112,7 @@
     "link_expired_description": "Ссылка, которой вы воспользовались, больше не действительна."
   },
   "common": {
+    "Filter": "Фильтр",
     "accepted": "Принято",
     "account": "Аккаунт",
     "account_settings": "Настройки аккаунта",
@@ -225,6 +226,7 @@
     "failed_to_copy_to_clipboard": "Не удалось скопировать в буфер обмена",
     "failed_to_load_organizations": "Не удалось загрузить организации",
     "failed_to_load_workspaces": "Не удалось загрузить рабочие пространства",
+    "filter": "Фильтр",
     "finish": "Завершить",
     "first_name": "Имя",
     "follow_these": "Выполните следующие действия",
