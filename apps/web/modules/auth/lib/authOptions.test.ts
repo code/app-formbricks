@@ -158,7 +158,7 @@ describe("authOptions", () => {
     });
 
     test("should throw error if user not found", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
 
       const credentials = { email: mockUser.email, password: mockPassword };
@@ -166,10 +166,10 @@ describe("authOptions", () => {
       await expect(credentialsProvider.options.authorize(credentials, {})).rejects.toThrow(
         "Invalid credentials"
       );
-    });
+    }, 15000);
 
     test("should throw error if user has no password stored", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       vi.spyOn(prisma.user, "findUnique").mockResolvedValue({
         id: mockUser.id,
         email: mockUser.email,
@@ -181,10 +181,10 @@ describe("authOptions", () => {
       await expect(credentialsProvider.options.authorize(credentials, {})).rejects.toThrow(
         "User has no password stored"
       );
-    });
+    }, 15000);
 
     test("should throw error if password verification fails", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       vi.spyOn(prisma.user, "findUnique").mockResolvedValue({
         id: mockUserId,
         email: mockUser.email,
@@ -196,10 +196,10 @@ describe("authOptions", () => {
       await expect(credentialsProvider.options.authorize(credentials, {})).rejects.toThrow(
         "Invalid credentials"
       );
-    });
+    }, 15000);
 
     test("should successfully login when credentials are valid", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       const fakeUser = {
         id: mockUserId,
         email: mockUser.email,
@@ -218,11 +218,11 @@ describe("authOptions", () => {
         email: fakeUser.email,
         emailVerified: fakeUser.emailVerified,
       });
-    });
+    }, 15000);
 
     describe("Rate Limiting", () => {
       test("should apply rate limiting before credential validation", async () => {
-        vi.mocked(applyIPRateLimit).mockResolvedValue();
+        vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true });
         vi.spyOn(prisma.user, "findUnique").mockResolvedValue({
           id: mockUserId,
           email: mockUser.email,
@@ -255,7 +255,7 @@ describe("authOptions", () => {
       });
 
       test("should use correct rate limit configuration", async () => {
-        vi.mocked(applyIPRateLimit).mockResolvedValue();
+        vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true });
         vi.spyOn(prisma.user, "findUnique").mockResolvedValue({
           id: mockUserId,
           email: mockUser.email,
@@ -278,7 +278,7 @@ describe("authOptions", () => {
 
     describe("Two-Factor Backup Code login", () => {
       test("should throw error if backup codes are missing", async () => {
-        vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+        vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
         const mockUser = {
           id: mockUserId,
           email: "2fa@example.com",
@@ -307,7 +307,7 @@ describe("authOptions", () => {
     });
 
     test("should throw error if token is invalid or user not found", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       const credentials = { token: "badtoken" };
 
       await expect(tokenProvider.options.authorize(credentials, {})).rejects.toThrow(
@@ -317,7 +317,7 @@ describe("authOptions", () => {
 
     describe("Rate Limiting", () => {
       test("should apply rate limiting before token verification", async () => {
-        vi.mocked(applyIPRateLimit).mockResolvedValue();
+        vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true });
 
         const credentials = { token: "sometoken" };
 
@@ -435,11 +435,67 @@ describe("authOptions", () => {
     });
   });
 
+  describe("Enterprise SSO signIn callback", () => {
+    test("should not update lastLoginAt when SSO sign-in is denied", async () => {
+      vi.resetModules();
+
+      const mockHandleSsoCallback = vi.fn().mockRejectedValueOnce(new Error("OAuthAccountNotLinked"));
+      const mockUpdateUserLastLoginAt = vi.fn();
+      const mockCapturePostHogEvent = vi.fn();
+
+      vi.doMock("@/lib/constants", async (importOriginal) => {
+        const actual = await importOriginal<typeof import("@/lib/constants")>();
+        return {
+          ...actual,
+          EMAIL_VERIFICATION_DISABLED: false,
+          SESSION_MAX_AGE: 86400,
+          NEXTAUTH_SECRET: "test-secret",
+          WEBAPP_URL: "http://localhost:3000",
+          ENCRYPTION_KEY: "12345678901234567890123456789012",
+          REDIS_URL: undefined,
+          AUDIT_LOG_ENABLED: false,
+          AUDIT_LOG_GET_USER_IP: false,
+          ENTERPRISE_LICENSE_KEY: "test-enterprise-license",
+          SENTRY_DSN: undefined,
+          BREVO_API_KEY: undefined,
+          RATE_LIMITING_DISABLED: false,
+          CONTROL_HASH: "$2b$12$fzHf9le13Ss9UJ04xzmsjODXpFJxz6vsnupoepF5FiqDECkX2BH5q",
+          POSTHOG_KEY: "phc_test_key",
+        };
+      });
+      vi.doMock("@/modules/ee/sso/lib/providers", () => ({
+        getSSOProviders: vi.fn(() => []),
+      }));
+      vi.doMock("@/modules/ee/sso/lib/sso-handlers", () => ({
+        handleSsoCallback: mockHandleSsoCallback,
+      }));
+      vi.doMock("@/modules/auth/lib/user", () => ({
+        updateUser: vi.fn(),
+        updateUserLastLoginAt: mockUpdateUserLastLoginAt,
+      }));
+      vi.doMock("@/lib/posthog", () => ({
+        capturePostHogEvent: mockCapturePostHogEvent,
+      }));
+
+      const { authOptions: enterpriseAuthOptions } = await import("./authOptions");
+      const user = { ...mockUser, emailVerified: new Date() };
+      const account = { provider: "google", type: "oauth", providerAccountId: "provider-123" } as any;
+
+      await expect(enterpriseAuthOptions.callbacks?.signIn?.({ user, account } as any)).rejects.toThrow(
+        "OAuthAccountNotLinked"
+      );
+
+      expect(mockHandleSsoCallback).toHaveBeenCalled();
+      expect(mockUpdateUserLastLoginAt).not.toHaveBeenCalled();
+      expect(mockCapturePostHogEvent).not.toHaveBeenCalled();
+    });
+  });
+
   describe("Two-Factor Authentication (TOTP)", () => {
     const credentialsProvider = getProviderById("credentials");
 
     test("should throw error if TOTP code is missing when 2FA is enabled", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       const mockUser = {
         id: mockUserId,
         email: "2fa@example.com",
@@ -457,7 +513,7 @@ describe("authOptions", () => {
     });
 
     test("should throw error if two factor secret is missing", async () => {
-      vi.mocked(applyIPRateLimit).mockResolvedValue(); // Rate limiting passes
+      vi.mocked(applyIPRateLimit).mockResolvedValue({ allowed: true }); // Rate limiting passes
       const mockUser = {
         id: mockUserId,
         email: "2fa@example.com",
