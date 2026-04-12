@@ -1782,6 +1782,11 @@
         "upper_label": "Bovenste etiket",
         "url_filters": "URL-filters",
         "url_not_supported": "URL niet ondersteund",
+        "validate_id_duplicate": "{type}-ID bestaat al in vragen, verborgen velden of variabelen.",
+        "validate_id_empty": "Voer een {type}-ID in.",
+        "validate_id_invalid_chars": "{type}-ID is niet toegestaan. Gebruik alleen alfanumerieke tekens, koppeltekens of underscores.",
+        "validate_id_no_spaces": "{type}-ID mag geen spaties bevatten. Verwijder de spaties.",
+        "validate_id_reserved": "{type}-ID \"{field}\" is niet toegestaan. Dit is een gereserveerd trefwoord.",
         "validation": {
           "add_validation_rule": "Validatieregel toevoegen",
           "answer_all_rows": "Beantwoord alle rijen",

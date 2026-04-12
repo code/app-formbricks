@@ -1706,6 +1706,11 @@ checksums:
     environments/surveys/edit/upper_label: 1fa48bce3fade6ffc1a52d9fdddf9e17
     environments/surveys/edit/url_filters: e524879d2eb74463d7fd06a7e0f53421
     environments/surveys/edit/url_not_supported: af8a753467c617b596aadef1aaaed664
+    environments/surveys/edit/validate_id_duplicate: f88ec35a9bd4921fb096817b9263b59a
+    environments/surveys/edit/validate_id_empty: 3ee25d429ed5ca9e047f9aee95496323
+    environments/surveys/edit/validate_id_invalid_chars: 50239938a408c04b02d77b8cd096d767
+    environments/surveys/edit/validate_id_no_spaces: 11c4408574c11c51f30fe98be18baadb
+    environments/surveys/edit/validate_id_reserved: 2696af4715ee91539e247b1b9a931721
     environments/surveys/edit/validation/add_validation_rule: e0c3208977140e5475df3e9b08927dbf
     environments/surveys/edit/validation/answer_all_rows: 5ca73b038ac41922a09802fef4b5afc0
     environments/surveys/edit/validation/characters: e26d6bb531181ec1ed551e264bc86259

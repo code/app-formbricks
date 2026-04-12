@@ -1782,6 +1782,11 @@
         "upper_label": "Etiqueta superior",
         "url_filters": "Filtros de URL",
         "url_not_supported": "URL no compatible",
+        "validate_id_duplicate": "El ID de {type} ya existe en preguntas, campos ocultos o variables.",
+        "validate_id_empty": "Por favor, introduce un ID de {type}.",
+        "validate_id_invalid_chars": "El ID de {type} no está permitido. Por favor, utiliza solo caracteres alfanuméricos, guiones o guiones bajos.",
+        "validate_id_no_spaces": "El ID de {type} no puede contener espacios. Por favor, elimina los espacios.",
+        "validate_id_reserved": "El ID de {type} \"{field}\" no está permitido. Es una palabra reservada.",
         "validation": {
           "add_validation_rule": "Añadir regla de validación",
           "answer_all_rows": "Responde todas las filas",
